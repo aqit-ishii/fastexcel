@@ -946,16 +946,28 @@ public class Worksheet implements Closeable {
         writer.append(margins);
 
         /* set page orientation for the print setup */
-        writer.append("<pageSetup")
-            .append(" paperSize=\"" + paperSize.xmlValue + "\"")
-            .append(" scale=\"" + pageScale + "\"")
-            .append(" fitToWidth=\"" + fitToWidth + "\"")
-            .append(" fitToHeight=\"" + fitToHeight + "\"")
-            .append(" firstPageNumber=\"" + firstPageNumber + "\"")
-            .append(" useFirstPageNumber=\"" + useFirstPageNumber.toString() + "\"")
-            .append(" blackAndWhite=\"" + blackAndWhite.toString() + "\"")
-            .append(" orientation=\"" + pageOrientation + "\"")
-            .append("/>");
+        if (pageScale >= 0) {
+            writer.append("<pageSetup")
+                    .append(" paperSize=\"" + paperSize.xmlValue + "\"")
+                    .append(" scale=\"" + pageScale + "\"")
+                    .append(" fitToWidth=\"" + fitToWidth + "\"")
+                    .append(" fitToHeight=\"" + fitToHeight + "\"")
+                    .append(" firstPageNumber=\"" + firstPageNumber + "\"")
+                    .append(" useFirstPageNumber=\"" + useFirstPageNumber.toString() + "\"")
+                    .append(" blackAndWhite=\"" + blackAndWhite.toString() + "\"")
+                    .append(" orientation=\"" + pageOrientation + "\"")
+                    .append("/>");
+        } else {
+            writer.append("<pageSetup")
+                    .append(" paperSize=\"" + paperSize.xmlValue + "\"")
+                    .append(" fitToWidth=\"" + fitToWidth + "\"")
+                    .append(" fitToHeight=\"" + fitToHeight + "\"")
+                    .append(" firstPageNumber=\"" + firstPageNumber + "\"")
+                    .append(" useFirstPageNumber=\"" + useFirstPageNumber.toString() + "\"")
+                    .append(" blackAndWhite=\"" + blackAndWhite.toString() + "\"")
+                    .append(" orientation=\"" + pageOrientation + "\"")
+                    .append("/>");
+        }
 
         /* write to header and footer */
         writer.append("<headerFooter differentFirst=\"false\" differentOddEven=\"false\">");
@@ -1214,6 +1226,9 @@ public class Worksheet implements Closeable {
 
     public void setFitToPage(Boolean fitToPage) {
         this.fitToPage = fitToPage;
+        if (fitToPage) {
+            this.pageScale = -1;
+        }
     }
 
     /**
@@ -1314,11 +1329,13 @@ public class Worksheet implements Closeable {
     public void fitToHeight(Short fitToHeight) {
         this.fitToPage = true;
         this.fitToHeight = fitToHeight;
+        this.pageScale = -1;
     }
 
     public void fitToWidth(Short fitToWidth) {
         this.fitToPage = true;
         this.fitToWidth = fitToWidth;
+        this.pageScale = -1;
     }
 
     public void printInBlackAndWhite() {
